@@ -15,7 +15,7 @@ import org.springframework.util.concurrent.ListenableFuture;
 @Component
 public class LibraryEventPublisher {
 
-    private static final String topic = "library.event";
+    private static final String topic = "library.events";
     @Autowired
     KafkaTemplate<Integer, String> kafkaTemplate;
 
@@ -25,19 +25,11 @@ public class LibraryEventPublisher {
     @Autowired
     LibraryEventCallback libraryEventCallback = new LibraryEventCallback();
 
-    public void send(LibraryEvent libraryEvent) throws JsonProcessingException {
-       ListenableFuture<SendResult<Integer, String>> futureResult = kafkaTemplate.send(topic, libraryEvent.getEventId(), objectMapper.writeValueAsString(libraryEvent));
+    public ListenableFuture<SendResult<Integer, String>> send(LibraryEvent libraryEvent) throws JsonProcessingException {
+       ListenableFuture<SendResult<Integer, String>> futureResult =
+           kafkaTemplate.send(topic, libraryEvent.getEventId(), objectMapper.writeValueAsString(libraryEvent));
         futureResult.addCallback(libraryEventCallback);
+
+        return futureResult;
     }
-
-    private void handleSuccess(Integer key, String value, SendResult<Integer, String> result) {
-        log.info("Successfully sent message with key {}", key);
-    }
-
-    private void handleError(Integer key, String value, Throwable error) {
-        log.error("Error sending message with key {}: {}",key, error.getMessage());
-    }
-
-
-
 }
