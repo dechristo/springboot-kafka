@@ -62,7 +62,7 @@ public class LibraryEventsControllerIntegrationTest {
     @Timeout(1)
     void addBookSuccessfullyCreatesABook() {
         Book newBook = Book.builder()
-            .name("Revival")
+            .title("Revival")
             .author("Stephen King")
             .id(1)
             .build();
@@ -79,7 +79,7 @@ public class LibraryEventsControllerIntegrationTest {
 
         ConsumerRecord<Integer, String> consumerRecord = KafkaTestUtils
             .getSingleRecord(consumer, "library.events");
-        String expectedMessage = "{\"eventId\":1001,\"eventType\":\"CREATE\",\"book\":{\"id\":1,\"name\":\"Revival\",\"author\":\"Stephen King\"}}";
+        String expectedMessage = "{\"eventId\":1001,\"eventType\":\"CREATE\",\"book\":{\"id\":1,\"title\":\"Revival\",\"author\":\"Stephen King\"}}";
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(expectedMessage, consumerRecord.value());
     }
@@ -88,7 +88,7 @@ public class LibraryEventsControllerIntegrationTest {
     @Timeout(1)
     void addBookSuccessfullyUpdatesABook() {
         Book newBook = Book.builder()
-            .name("Revival (Hardcover) EN/US")
+            .title("Revival (Hardcover) EN/US")
             .author("Stephen King")
             .id(1)
             .build();
@@ -107,7 +107,7 @@ public class LibraryEventsControllerIntegrationTest {
         ConsumerRecord<Integer, String> consumerRecord = KafkaTestUtils
             .getSingleRecord(consumer, "library.events");
 
-        String expectedMessage = "{\"eventId\":1002,\"eventType\":\"UPDATE\",\"book\":{\"id\":1,\"name\":\"Revival (Hardcover) EN/US\",\"author\":\"Stephen King\"}}";
+        String expectedMessage = "{\"eventId\":1002,\"eventType\":\"UPDATE\",\"book\":{\"id\":1,\"title\":\"Revival (Hardcover) EN/US\",\"author\":\"Stephen King\"}}";
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedMessage, consumerRecord.value());
         consumer.commitSync();

@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,7 +34,7 @@ public class LibraryEventsControllerTest {
     @Test
     void addBookCreatesBookAndReturnsHttpCreated() throws Exception {
         Book newBook = Book.builder()
-            .name("Revival")
+            .title("Revival")
             .author("Stephen King")
             .id(1)
             .build();
@@ -56,9 +57,9 @@ public class LibraryEventsControllerTest {
     }
 
     @Test
-    void addBookReturnsHttpBadRequestWhenNameIsEmpty() throws Exception {
+    void addBookReturnsHttpBadRequestWhenTitleIsEmpty() throws Exception {
         Book newBook = Book.builder()
-            .name("")
+            .title("")
             .author("Stephen King")
             .id(11)
             .build();
@@ -74,7 +75,7 @@ public class LibraryEventsControllerTest {
             .when(libraryService)
             .send(isA(LibraryEvent.class));
 
-        String expectedErrorMsg = "book.name: must not be blank";
+        String expectedErrorMsg = "book.title: must not be blank";
         mockMvc.perform(post("/api/v1/book")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -85,7 +86,7 @@ public class LibraryEventsControllerTest {
     @Test
     void addBookReturnsHttpBadRequestWhenAuthorIsEmpty() throws Exception {
         Book newBook = Book.builder()
-            .name("Revival")
+            .title("Revival")
             .author("")
             .id(2)
             .build();
@@ -112,7 +113,7 @@ public class LibraryEventsControllerTest {
     @Test
     void addBookReturnsHttpBadRequestWhenIdNull() throws Exception {
         Book newBook = Book.builder()
-            .name("Revival")
+            .title("Revival")
             .author("Stephen King")
             .build();
 
@@ -150,6 +151,159 @@ public class LibraryEventsControllerTest {
 
         String expectedErrorMsg = "book: must not be null";
         mockMvc.perform(post("/api/v1/book")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(expectedErrorMsg));
+    }
+
+    @Test
+    void updateBookCreatesBookAndReturnsHttpOk() throws Exception {
+        Book updatedBook = Book.builder()
+            .title("Revival (Hardback) EN/US")
+            .author("Stephen King")
+            .id(1)
+            .build();
+
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+            .eventId(1003)
+            .book(updatedBook)
+            .build();
+
+        String json = objectMapper.writeValueAsString(libraryEvent);
+
+        doNothing()
+            .when(libraryService)
+            .send(isA(LibraryEvent.class));
+
+        mockMvc.perform(put("/api/v1/book")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void updateBookReturnsHttpBadRequestWhenTitleIsEmpty() throws Exception {
+        Book updatedBook = Book.builder()
+            .title("")
+            .author("Stephen King")
+            .id(11)
+            .build();
+
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+            .eventId(1003)
+            .book(updatedBook)
+            .build();
+
+        String json = objectMapper.writeValueAsString(libraryEvent);
+
+        doNothing()
+            .when(libraryService)
+            .send(isA(LibraryEvent.class));
+
+        String expectedErrorMsg = "book.title: must not be blank";
+        mockMvc.perform(put("/api/v1/book")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(expectedErrorMsg));
+    }
+
+    @Test
+    void updateBookReturnsHttpBadRequestWhenAuthorIsEmpty() throws Exception {
+        Book updatedBook = Book.builder()
+            .title("Revival")
+            .author("")
+            .id(2)
+            .build();
+
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+            .eventId(1003)
+            .book(updatedBook)
+            .build();
+
+        String json = objectMapper.writeValueAsString(libraryEvent);
+
+        doNothing()
+            .when(libraryService)
+            .send(isA(LibraryEvent.class));
+
+        String expectedErrorMsg = "book.author: must not be blank";
+        mockMvc.perform(put("/api/v1/book")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(expectedErrorMsg));
+    }
+
+    @Test
+    void updateBookReturnsHttpBadRequestWhenIdNull() throws Exception {
+        Book updatedBook = Book.builder()
+            .title("Revival")
+            .author("Stephen King")
+            .build();
+
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+            .eventId(1003)
+            .book(updatedBook)
+            .build();
+
+        String json = objectMapper.writeValueAsString(libraryEvent);
+
+        doNothing()
+            .when(libraryService)
+            .send(isA(LibraryEvent.class));
+
+        String expectedErrorMsg = "book.id: must not be null";
+        mockMvc.perform(put("/api/v1/book")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(expectedErrorMsg));
+    }
+
+    @Test
+    void updateBookReturnsHttpBadRequestWhenBookIsNull() throws Exception {
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+            .eventId(1003)
+            .book(null)
+            .build();
+
+        String json = objectMapper.writeValueAsString(libraryEvent);
+
+        doNothing()
+            .when(libraryService)
+            .send(isA(LibraryEvent.class));
+
+        String expectedErrorMsg = "book: must not be null";
+        mockMvc.perform(put("/api/v1/book")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(expectedErrorMsg));
+    }
+
+    @Test
+    void updateBookReturnsHttpBadRequestWhenLibraryEventIdIsNull() throws Exception {
+        Book updatedBook = Book.builder()
+            .title("Revival")
+            .author("Stephen King")
+            .id(7)
+            .build();
+
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+            .eventId(null)
+            .book(updatedBook)
+            .build();
+
+        String json = objectMapper.writeValueAsString(libraryEvent);
+
+        doNothing()
+            .when(libraryService)
+            .send(isA(LibraryEvent.class));
+
+        String expectedErrorMsg = "For updating, libraryEventId is mandatory.";
+        mockMvc.perform(put("/api/v1/book")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())

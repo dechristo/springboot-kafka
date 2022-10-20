@@ -40,7 +40,7 @@ public class LibraryEventPublisherTest {
     @Test
     void producerSendFailureThrowsException() throws JsonProcessingException, ExecutionException, InterruptedException {
         Book newBook = Book.builder()
-            .name("Ocean Prey")
+            .title("Ocean Prey")
             .author("John Sandford")
             .id(7)
             .build();
@@ -65,7 +65,7 @@ public class LibraryEventPublisherTest {
     @Test
     void producerSendMessageSuccessfully() throws JsonProcessingException, ExecutionException, InterruptedException {
         Book newBook = Book.builder()
-            .name("Ocean Prey")
+            .title("Ocean Prey")
             .author("John Sandford")
             .id(99)
             .build();

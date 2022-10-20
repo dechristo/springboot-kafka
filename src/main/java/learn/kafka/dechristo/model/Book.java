@@ -16,7 +16,8 @@ public class Book {
     @NotNull
     private Integer id;
     @NotBlank
-    private String name;
+    private String title;
     @NotBlank
     private String author;
 }
+
