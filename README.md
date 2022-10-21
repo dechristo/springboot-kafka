@@ -1,5 +1,5 @@
 # Kafka Publisher example with Spring Boot
-Kafka + Spring Boot with Unit and Integration tests, security, etc.
+Kafka + Spring Boot: Publisher with Unit and Integration tests, security, etc.
 - Java 17
 - Spring Boot 2.7.4
 
