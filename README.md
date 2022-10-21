@@ -13,3 +13,4 @@ API documentation built with OpenAPI v3 under
 ## 3. TODOs
 - Docker
 - Jenkins
+- Exception Handling
